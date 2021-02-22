@@ -44,7 +44,8 @@ class OffersControllerTest {
     @Test
     public void shouldFetchOffersWhenGetOffersCalledWithDefaultPagination() throws Exception {
         //Arrange
-        setDefaultOfferResponse();
+        setDefaultOfferResponse("Kognitive");
+
         given(offersService.fetchOffers(null, 0, 3)).willReturn(offersPage);
 
         //Act
@@ -74,7 +75,7 @@ class OffersControllerTest {
         //Act
         mockMvc.perform(MockMvcRequestBuilders.post(KOGNITIVE_COLLECT_OFFERS)
                 .contentType("application/json")
-                .content(objectMapper.writeValueAsString(getOffers()))
+                .content(objectMapper.writeValueAsString(getOffers("Kogitive")))
                 .accept("application/json"))
                 .andExpect(status().isOk())
                 .andDo(result -> {
@@ -85,9 +86,24 @@ class OffersControllerTest {
 
     }
 
-    private void setDefaultOfferResponse() {
+    @Test
+    public void shouldReturnBadRequestWhenPostOffersPostOfferIsNotSetWithMandatoryRequestBody() throws Exception {
+        //Arrange
+        OffersResponse offersResponse = getOffersResponse();
+        given(offersService.postOffers(any(Offers.class))).willReturn(offersResponse);
+
+        //Act
+        mockMvc.perform(MockMvcRequestBuilders.post(KOGNITIVE_COLLECT_OFFERS)
+                .contentType("application/json")
+                .content(objectMapper.writeValueAsString(getOffers(null)))
+                .accept("application/json"))
+                .andExpect(status().isBadRequest());
+
+    }
+
+    private void setDefaultOfferResponse(String name) {
         offersPage = new ArrayList<>();
-        Offers offers = getOffers();
+        Offers offers = getOffers(name);
 
         Images images = new Images();
         offers.setImages(images);
@@ -96,9 +112,9 @@ class OffersControllerTest {
         offersPage.add(offers);
     }
 
-    private Offers getOffers() {
+    private Offers getOffers(String name) {
         Offers offers = new Offers();
-        offers.setName("Koginitive");
+        offers.setName(name);
         offers.setLocation("London");
         offers.setValidFrom("Jan");
         offers.setValidTo("Feb");
