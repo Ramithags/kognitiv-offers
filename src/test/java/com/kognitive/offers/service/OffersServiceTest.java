@@ -71,9 +71,8 @@ class OffersServiceTest {
         Images[] images = new Images[10];
 
         when(templateClientConfig.getForObject("https://jsonplaceholder.typicode.com/photos", Images[].class)).thenReturn(images);
-        ;
+
         when(offersRepository.save(any(Offers.class))).thenReturn(getOffers());
-        when(offersRepository.existsById(any())).thenReturn(true);
 
         //Act
         OffersResponse offersResponse = offersService.postOffers(getOffers());
@@ -98,6 +97,7 @@ class OffersServiceTest {
 
     private Offers getOffers() {
         Offers offers = new Offers();
+        offers.setId(1l);
         offers.setName("Koginitive");
         offers.setLocation("London");
         offers.setValidFrom("Jan");

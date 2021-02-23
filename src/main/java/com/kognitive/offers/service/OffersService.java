@@ -49,12 +49,12 @@ public class OffersService {
     public OffersResponse postOffers(Offers offers) {
         extractedImageFromExternalResource(offers);
 
-        offersRepository.save(offers);
+        Offers savedOffers = offersRepository.save(offers);
 
-        boolean isSuccessful = offersRepository.existsById(offers.getId());
+        offersRepository.flush();
 
         OffersResponse offersResponse = new OffersResponse();
-        offersResponse.setSuccess(isSuccessful);
+        offersResponse.setSuccess(savedOffers.getId() != null);
 
         return offersResponse;
     }

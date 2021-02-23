@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.OK;
@@ -24,12 +25,12 @@ public class OffersController {
 
     private OffersService offersService;
 
-    @GetMapping(value = "/offers", produces={"application/xml", "application/json"})
+    @GetMapping(value = "/offers", produces = {"application/xml", "application/json"})
     @ResponseBody
     public ResponseEntity<List<Offers>> getOffers(@RequestParam(required = false) String name, @RequestParam(defaultValue = "0") int page,
                                                   @RequestParam(defaultValue = "3") int size) {
 
-        if(offersService.fetchOffers(name, page, size).isEmpty()) {
+        if (offersService.fetchOffers(name, page, size).isEmpty()) {
             throw new ContentNotFoundException();
         }
         return status(OK).body(offersService.fetchOffers(name, page, size));
@@ -37,7 +38,7 @@ public class OffersController {
     }
 
     @PostMapping("/offers")
-    public ResponseEntity<OffersResponse> postOffers(@RequestBody Offers offers) {
-                    return status(OK).body(offersService.postOffers(offers));
+    public ResponseEntity<OffersResponse> postOffers(@Valid @RequestBody Offers offers) {
+        return status(OK).body(offersService.postOffers(offers));
     }
 }
